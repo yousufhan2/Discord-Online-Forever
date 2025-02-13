@@ -12,15 +12,21 @@ bot.on("ready", async () => {
 
     try {
         // Botu belirtilen ses kanalına bağla
-        await bot.joinVoiceChannel(voiceChannelID);
+        const voiceConnection = await bot.joinVoiceChannel(voiceChannelID);
         console.log(`Bot ${voiceChannelID} ID'li ses kanalına bağlandı.`);
+
+        // Botun kendini susturmasını ve sağırlaştırmasını sağla
+        const guildID = bot.guilds.find(guild => guild.channels.has(voiceChannelID)).id;
+        await bot.editVoiceState(guildID, { selfMute: true, selfDeaf: true });
+        console.log("Bot ses kanalında kendini susturdu ve sağırlaştırdı.");
     } catch (error) {
+        // Hata durumunda konsola hata mesajını yazdır
         console.error("Ses kanalına bağlanırken hata oluştu:", error);
     }
 });
 
 bot.on("error", (err) => {
-    console.error(err); // or your preferred logger
+    console.error("Bot genel hatası:", err); // or your preferred logger
 });
 
 bot.connect();
